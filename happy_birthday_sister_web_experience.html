@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>រីករាយថ្ងៃខួបកំណើតប្អូនស្រីជាទីស្រលាញ់ | Happy Birthday!</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Khmer & Latin -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Moul&family=Pacifico&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Kantumruy Pro', 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fff1f2 0%, #fdf2f8 35%, #f5f3ff 70%, #ede9fe 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #4b5563;
+        }
+        
+        .font-khmer-title {
+            font-family: 'Moul', cursive;
+        }
+        
+        .font-pacifico {
+            font-family: 'Pacifico', cursive;
+        }
+
+        /* Floating elements animation */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-16px) rotate(3deg); }
+        }
+        @keyframes floatReverse {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(14px) rotate(-3deg); }
+        }
+        .animate-float {
+            animation: floatSlow 5s ease-in-out infinite;
+        }
+        .animate-float-reverse {
+            animation: floatReverse 6s ease-in-out infinite;
+        }
+
+        /* Sparkle & Glow Pulse */
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.6; filter: drop-shadow(0 0 10px rgba(244, 114, 182, 0.6)); }
+            50% { opacity: 1; filter: drop-shadow(0 0 25px rgba(236, 72, 153, 0.9)); }
+        }
+        .animate-glow {
+            animation: glowPulse 2.8s infinite;
+        }
+
+        /* Candle Flame */
+        @keyframes flicker {
+            0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.95; }
+            25% { transform: scale(1.08, 1.15) rotate(2deg); opacity: 1; }
+            50% { transform: scale(0.95, 0.9) rotate(-2deg); opacity: 0.9; }
+            75% { transform: scale(1.05, 1.1) rotate(1deg); opacity: 1; }
+        }
+        .flame-anim {
+            animation: flicker 1s infinite alternate ease-in-out;
+            transform-origin: bottom center;
+        }
+
+        /* Glassmorphism card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 15px 35px -5px rgba(244, 114, 182, 0.15), 0 8px 16px -6px rgba(168, 85, 247, 0.1);
+        }
+
+        /* Balloons */
+        .balloon-item {
+            position: fixed;
+            bottom: -120px;
+            pointer-events: none;
+            z-index: 10;
+            animation: riseUp linear infinite;
+        }
+        @keyframes riseUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.85; }
+            100% { transform: translateY(-130vh) rotate(20deg); opacity: 0; }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdf2f8;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f472b6;
+            border-radius: 999px;
+        }
+    </style>
+</head>
+<body class="relative selection:bg-pink-300 selection:text-pink-900">
+
+    <!-- Ambient Floating Balloons Background Container -->
+    <div id="balloon-container" class="overflow-hidden fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- Music / Sound Effect Control Bar (Floating) -->
+    <div class="fixed top-4 right-4 z-50 flex items-center gap-2">
+        <button id="soundToggleBtn" onclick="toggleAudio()" class="glass-card flex items-center gap-2 px-4 py-2.5 rounded-full text-pink-600 hover:text-pink-700 hover:scale-105 transition duration-300 shadow-md">
+            <i data-lucide="music" class="w-5 h-5 animate-spin" style="animation-duration: 8s;"></i>
+            <span id="soundText" class="text-sm font-semibold">ចាក់ភ្លេងពិរោះ 🎵</span>
+        </button>
+        <button onclick="launchConfettiRain()" class="glass-card p-2.5 rounded-full text-purple-600 hover:text-purple-700 hover:scale-110 transition duration-300 shadow-md" title="បាញ់កាំជ្រួចអបអរ">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </button>
+    </div>
+
+    <!-- MAIN HERO SECTION -->
+    <section class="min-h-screen relative flex flex-col justify-center items-center text-center px-4 pt-16 pb-12 z-10">
+        
+        <!-- Cute Tag Badge -->
+        <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full glass-card text-pink-600 mb-6 border border-pink-200 animate-bounce shadow-sm">
+            <span>🎂</span>
+            <span class="text-sm sm:text-base font-semibold tracking-wide">ថ្ងៃពិសេសបំផុតសម្រាប់មនុស្សពិសេស!</span>
+            <span>✨</span>
+        </div>
+
+        <!-- Main Title -->
+        <h1 class="font-khmer-title text-3xl sm:text-5xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 mb-3 leading-relaxed drop-shadow-sm">
+            រីករាយថ្ងៃខួបកំណើត!
+        </h1>
+        <p class="font-pacifico text-2xl sm:text-3xl md:text-4xl text-pink-400 mb-6 animate-pulse">
+            Happy Birthday to My Sweet Sister 🌸
+        </p>
+
+        <!-- Profile Highlight Avatar with Cute Floating Frame & Upload Action -->
+        <div class="relative my-4 inline-block group">
+            <div class="absolute -inset-2 bg-gradient-to-r from-pink-400 via-rose-300 to-purple-400 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-500 animate-pulse"></div>
+            <div class="relative w-52 h-52 sm:w-64 sm:h-64 rounded-full overflow-hidden border-4 border-white shadow-2xl p-1 bg-white cursor-pointer" onclick="zoomImage(document.getElementById('heroImg').src, 'ស្នាមញញឹមដ៏ស្រស់ស្អាត និងគួរឱ្យស្រលាញ់បំផុត')">
+                <img id="heroImg"
+                     src="pic4_3.jpg" 
+                     onerror="this.src='pic4_2.jpg'; this.onerror=function(){this.src='pic4.jpg'; this.onerror=function(){this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'};};" 
+                     alt="Birthday Sister" 
+                     class="w-full h-full object-cover rounded-full transform group-hover:scale-105 transition duration-500">
+            </div>
+            <!-- Crown or Bow Decor -->
+            <div class="absolute -top-3 right-6 text-3xl sm:text-4xl transform rotate-12 filter drop-shadow">
+                👑
+            </div>
+            <div class="absolute -bottom-2 left-6 text-3xl sm:text-4xl transform -rotate-12 filter drop-shadow">
+                💖
+            </div>
+        </div>
+
+        <!-- Custom Upload Bar (Allows user to directly upload or replace photos from their device) -->
+        <div class="mt-2 mb-4">
+            <label class="inline-flex items-center gap-2 px-4 py-2 bg-white/90 hover:bg-white text-pink-600 rounded-full text-xs sm:text-sm font-semibold shadow-sm border border-pink-200 cursor-pointer hover:shadow-md transition">
+                <i data-lucide="image-plus" class="w-4 h-4"></i>
+                <span>ប្តូររូបភាពពីទូរស័ព្ទ / កុំព្យូទ័រ (Upload)</span>
+                <input type="file" accept="image/*" class="hidden" onchange="handleSingleUpload(event, 'heroImg')">
+            </label>
+        </div>
+
+        <!-- Heartfelt Short Subtitle -->
+        <p class="max-w-xl text-gray-700 text-base sm:text-lg mt-5 font-normal leading-relaxed px-4">
+            សូមជូនពរឱ្យប្អូនស្រីសំណព្វចិត្ត មានសុខភាពល្អបរិបូរណ៍ សម្រស់កាន់តែក្មេងខ្ចី ញញឹមស្រស់ថ្លាជានិច្ច និងសម្រេចបានគ្រប់បំណងប្រាថ្នាក្នុងឆាកជីវិត! 💕
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-4 mt-8">
+            <a href="#cake-section" class="px-7 py-3 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 text-white font-medium shadow-lg shadow-pink-200 hover:shadow-pink-300 hover:scale-105 transition-all duration-300 flex items-center gap-2">
+                <span>🎂 ផ្លុំទៀនខួបកំណើត</span>
+            </a>
+            <a href="#memories" class="px-7 py-3 rounded-full glass-card text-pink-600 hover:text-pink-700 font-medium hover:bg-white hover:scale-105 transition-all duration-300 flex items-center gap-2">
+                <span>📷 មើលរូបភាពអនុស្សាវរីយ៍</span>
+            </a>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="mt-12 text-pink-400 animate-bounce">
+            <i data-lucide="chevron-down" class="w-7 h-7 mx-auto"></i>
+        </div>
+    </section>
+
+
+    <!-- INTERACTIVE BIRTHDAY CAKE & WISH SECTION -->
+    <section id="cake-section" class="py-16 px-4 relative z-10">
+        <div class="max-w-3xl mx-auto glass-card rounded-3xl p-6 sm:p-10 text-center shadow-xl border border-pink-100">
+            
+            <div class="inline-block p-3 bg-pink-100 text-pink-600 rounded-full mb-3">
+                <i data-lucide="party-popper" class="w-8 h-8"></i>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+                ផ្សងបំណងប្រាថ្នា និងផ្លុំពន្លត់ទៀន 🎂
+            </h2>
+            <p class="text-gray-500 text-sm sm:text-base mb-8">
+                ចុចលើទៀន ឬចុចប៊ូតុងខាងក្រោមដើម្បីផ្លុំពន្លត់ទៀន រួចផ្សងអ្វីដែលប្អូនស្រលាញ់បំផុត!
+            </p>
+
+            <!-- Cake Visual Container -->
+            <div class="relative w-64 h-64 sm:w-72 sm:h-72 mx-auto flex flex-col justify-end items-center pb-4 select-none cursor-pointer" onclick="blowCandleToggle()">
+                
+                <!-- Candles Container -->
+                <div class="flex items-end justify-center gap-4 mb-[-2px] z-20">
+                    <!-- Candle 1 -->
+                    <div class="flex flex-col items-center">
+                        <div id="flame1" class="w-4 h-6 bg-gradient-to-t from-yellow-500 via-orange-400 to-red-400 rounded-full flame-anim shadow-[0_0_12px_#f59e0b]"></div>
+                        <div class="w-3 h-14 bg-gradient-to-b from-pink-300 to-rose-400 rounded-t-sm shadow-sm border border-pink-200"></div>
+                    </div>
+
+                    <!-- Candle 2 (Center) -->
+                    <div class="flex flex-col items-center mb-1">
+                        <div id="flame2" class="w-5 h-7 bg-gradient-to-t from-yellow-500 via-amber-300 to-red-400 rounded-full flame-anim shadow-[0_0_15px_#f59e0b]"></div>
+                        <div class="w-3.5 h-16 bg-gradient-to-b from-purple-300 to-indigo-400 rounded-t-sm shadow-sm border border-purple-200"></div>
+                    </div>
+
+                    <!-- Candle 3 -->
+                    <div class="flex flex-col items-center">
+                        <div id="flame3" class="w-4 h-6 bg-gradient-to-t from-yellow-500 via-orange-400 to-red-400 rounded-full flame-anim shadow-[0_0_12px_#f59e0b]"></div>
+                        <div class="w-3 h-14 bg-gradient-to-b from-pink-300 to-rose-400 rounded-t-sm shadow-sm border border-pink-200"></div>
+                    </div>
+                </div>
+
+                <!-- Cake Top Layer -->
+                <div class="w-36 sm:w-44 h-16 bg-gradient-to-r from-pink-200 via-rose-200 to-pink-300 rounded-t-2xl relative shadow-inner border-t-4 border-pink-100 flex items-center justify-around px-3">
+                    <span class="text-sm">🍓</span>
+                    <span class="text-sm">🍒</span>
+                    <span class="text-sm">🍓</span>
+                </div>
+
+                <!-- Cake Middle Layer -->
+                <div class="w-48 sm:w-56 h-14 bg-gradient-to-r from-rose-100 via-white to-pink-100 shadow flex items-center justify-center relative border-y border-pink-200">
+                    <span class="text-xs tracking-widest text-pink-400 font-semibold uppercase">✨ Sweet Heart ✨</span>
+                </div>
+
+                <!-- Cake Bottom Base Layer -->
+                <div class="w-60 sm:w-64 h-18 bg-gradient-to-r from-purple-200 via-pink-200 to-rose-200 rounded-b-2xl shadow-lg border-b-4 border-purple-300 relative flex items-center justify-around px-4">
+                    <span class="text-lg">🌸</span>
+                    <span class="text-lg">🧁</span>
+                    <span class="text-lg">💖</span>
+                    <span class="text-lg">🌸</span>
+                </div>
+
+                <!-- Cake Plate -->
+                <div class="w-68 sm:w-72 h-4 bg-gray-100 rounded-full shadow-md mt-1 border border-gray-200"></div>
+            </div>
+
+            <!-- Blow Button & Status Message -->
+            <div class="mt-6">
+                <button id="blowBtn" onclick="blowCandleToggle()" class="px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow-md hover:scale-105 active:scale-95 transition duration-300">
+                    💨 ចុចទីនេះដើម្បីផ្លុំពន្លត់ទៀន
+                </button>
+            </div>
+
+            <!-- Wish Reveal Box (Shown after blowing candles) -->
+            <div id="wishModal" class="hidden mt-8 p-6 bg-pink-50 border border-pink-200 rounded-2xl animate-fade-in">
+                <div class="text-3xl mb-2">🎉 យេ! បំណងប្រាថ្នានឹងក្លាយជាការពិត! 🎉</div>
+                <p class="text-gray-700 text-base sm:text-lg leading-relaxed font-medium">
+                    «សូមឱ្យរាល់ក្តីស្រមៃ បំណងប្រាថ្នា និងគោលដៅទាំងអស់របស់ប្អូនស្រី ឆាប់បានសម្រេចជោគជ័យដូចការប៉ង! បងស្រលាញ់ប្អូនខ្លាំងណាស់!» 💖
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- PHOTO GALLERY / SWEET MEMORIES -->
+    <section id="memories" class="py-16 px-4 relative z-10 max-w-6xl mx-auto">
+        <div class="text-center mb-8">
+            <span class="text-xs uppercase tracking-widest bg-pink-100 text-pink-600 px-3.5 py-1.5 rounded-full font-semibold">Memories & Love</span>
+            <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 mt-3 font-khmer-title">កម្រងរូបភាពអនុស្សាវរីយ៍ដ៏ស្រស់ស្អាត 📸</h2>
+            <p class="text-gray-500 text-sm sm:text-base mt-2">ចុចលើរូបនីមួយៗដើម្បីពង្រីកធំ ឬចុចប៊ូតុងផ្លាស់ប្តូររូបភាពតាមចិត្ត</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <!-- Photo Card 1 (pic4) -->
+            <div class="glass-card rounded-2xl overflow-hidden hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 shadow-md group border border-pink-200 flex flex-col justify-between">
+                <div class="h-80 overflow-hidden bg-pink-50 relative cursor-pointer" onclick="zoomImage(document.getElementById('galleryImg1').src, 'ស្នាមញញឹមដ៏ស្រស់ស្អាត និងគួរឱ្យស្រលាញ់ 🥰')">
+                    <img id="galleryImg1"
+                         src="pic4_3.jpg" 
+                         onerror="this.src='pic4_2.jpg'; this.onerror=function(){this.src='pic4.jpg'; this.onerror=function(){this.src='https://placehold.co/600x800/fce7f3/db2777?text=Sweet+Sister'};};" 
+                         alt="Cute Smile" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                        <span class="text-white text-sm font-medium flex items-center gap-1.5">
+                            <i data-lucide="maximize-2" class="w-4 h-4"></i> ចុចមើលរូបធំ
+                        </span>
+                    </div>
+                </div>
+                <div class="p-4 text-center bg-white/80">
+                    <h3 class="font-bold text-gray-800 text-base">ស្នាមញញឹមស្រស់ថ្លា</h3>
+                    <p class="text-xs text-pink-500 mt-1 font-medium mb-2">Sweet & Lovely Smile 🌸</p>
+                    <label class="text-[11px] inline-flex items-center gap-1 text-gray-500 hover:text-pink-600 cursor-pointer bg-pink-50 px-2.5 py-1 rounded-full border border-pink-100">
+                        <i data-lucide="camera" class="w-3 h-3"></i> ប្តូររូបនេះ
+                        <input type="file" accept="image/*" class="hidden" onchange="handleSingleUpload(event, 'galleryImg1')">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Photo Card 2 (pic3) -->
+            <div class="glass-card rounded-2xl overflow-hidden hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 shadow-md group border border-pink-200 flex flex-col justify-between">
+                <div class="h-80 overflow-hidden bg-pink-50 relative cursor-pointer" onclick="zoomImage(document.getElementById('galleryImg2').src, 'ភាពទន់ភ្លន់ សម្រស់ និងភាពស្រស់ស្រាយ 💖')">
+                    <img id="galleryImg2"
+                         src="pic3_3.jpg" 
+                         onerror="this.src='pic3_2.jpg'; this.onerror=function(){this.src='pic3.jpg'; this.onerror=function(){this.src='https://placehold.co/600x800/fce7f3/db2777?text=Gentle+Beauty'};};" 
+                         alt="Gentle Smile" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                        <span class="text-white text-sm font-medium flex items-center gap-1.5">
+                            <i data-lucide="maximize-2" class="w-4 h-4"></i> ចុចមើលរូបធំ
+                        </span>
+                    </div>
+                </div>
+                <div class="p-4 text-center bg-white/80">
+                    <h3 class="font-bold text-gray-800 text-base">មនុស្សស្រីគួរឱ្យស្រលាញ់</h3>
+                    <p class="text-xs text-pink-500 mt-1 font-medium mb-2">Gentle & Always Blooming ✨</p>
+                    <label class="text-[11px] inline-flex items-center gap-1 text-gray-500 hover:text-pink-600 cursor-pointer bg-pink-50 px-2.5 py-1 rounded-full border border-pink-100">
+                        <i data-lucide="camera" class="w-3 h-3"></i> ប្តូររូបនេះ
+                        <input type="file" accept="image/*" class="hidden" onchange="handleSingleUpload(event, 'galleryImg2')">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Photo Card 3 (pic2) -->
+            <div class="glass-card rounded-2xl overflow-hidden hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 shadow-md group border border-pink-200 flex flex-col justify-between">
+                <div class="h-80 overflow-hidden bg-pink-50 relative cursor-pointer" onclick="zoomImage(document.getElementById('galleryImg3').src, 'ផ្ញើក្តីស្រលាញ់ និងកាយវិការបេះដូង 🫶')">
+                    <img id="galleryImg3"
+                         src="pic2_3.jpg" 
+                         onerror="this.src='pic2_2.jpg'; this.onerror=function(){this.src='pic2.jpg'; this.onerror=function(){this.src='https://placehold.co/600x800/fce7f3/db2777?text=Heart+Pose'};};" 
+                         alt="Heart Pose" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                        <span class="text-white text-sm font-medium flex items-center gap-1.5">
+                            <i data-lucide="maximize-2" class="w-4 h-4"></i> ចុចមើលរូបធំ
+                        </span>
+                    </div>
+                </div>
+                <div class="p-4 text-center bg-white/80">
+                    <h3 class="font-bold text-gray-800 text-base">កាយវិការបេះដូង</h3>
+                    <p class="text-xs text-pink-500 mt-1 font-medium mb-2">Full of Love & Energy 🫶</p>
+                    <label class="text-[11px] inline-flex items-center gap-1 text-gray-500 hover:text-pink-600 cursor-pointer bg-pink-50 px-2.5 py-1 rounded-full border border-pink-100">
+                        <i data-lucide="camera" class="w-3 h-3"></i> ប្តូររូបនេះ
+                        <input type="file" accept="image/*" class="hidden" onchange="handleSingleUpload(event, 'galleryImg3')">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Photo Card 4 (pic1 Family) -->
+            <div class="glass-card rounded-2xl overflow-hidden hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 shadow-md group border border-pink-200 flex flex-col justify-between">
+                <div class="h-80 overflow-hidden bg-pink-50 relative cursor-pointer" onclick="zoomImage(document.getElementById('galleryImg4').src, 'ពេលវេលាដ៏មានន័យ និងកក់ក្តៅបំផុតក្នុងរង្វង់គ្រួសារ 👨‍👩‍👧‍👦')">
+                    <img id="galleryImg4"
+                         src="pic1_3.jpg" 
+                         onerror="this.src='pic1_2.jpg'; this.onerror=function(){this.src='pic1.jpg'; this.onerror=function(){this.src='https://placehold.co/600x800/fce7f3/db2777?text=Family+Love'};};" 
+                         alt="Family Gathering" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                        <span class="text-white text-sm font-medium flex items-center gap-1.5">
+                            <i data-lucide="maximize-2" class="w-4 h-4"></i> ចុចមើលរូបធំ
+                        </span>
+                    </div>
+                </div>
+                <div class="p-4 text-center bg-white/80">
+                    <h3 class="font-bold text-gray-800 text-base">គ្រួសារដ៏កក់ក្តៅ</h3>
+                    <p class="text-xs text-pink-500 mt-1 font-medium mb-2">Family Together Forever 👨‍👩‍👧‍👦</p>
+                    <label class="text-[11px] inline-flex items-center gap-1 text-gray-500 hover:text-pink-600 cursor-pointer bg-pink-50 px-2.5 py-1 rounded-full border border-pink-100">
+                        <i data-lucide="camera" class="w-3 h-3"></i> ប្តូររូបនេះ
+                        <input type="file" accept="image/*" class="hidden" onchange="handleSingleUpload(event, 'galleryImg4')">
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Photo Lightbox Modal -->
+    <div id="imageLightbox" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4" onclick="closeLightbox()">
+        <div class="relative max-w-lg w-full bg-white rounded-3xl p-3 shadow-2xl" onclick="event.stopPropagation()">
+            <button onclick="closeLightbox()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/90 transition z-10">
+                ✕
+            </button>
+            <div class="rounded-2xl overflow-hidden max-h-[75vh] flex items-center justify-center bg-gray-50">
+                <img id="lightboxImg" src="" alt="Zoomed View" class="w-full h-full object-contain max-h-[70vh]">
+            </div>
+            <p id="lightboxCaption" class="text-center text-gray-700 font-medium text-sm mt-3 px-2 py-1"></p>
+        </div>
+    </div>
+
+
+    <!-- HEARTFELT WISHES & BLESSINGS IN KHMER -->
+    <section class="py-16 px-4 relative z-10">
+        <div class="max-w-4xl mx-auto glass-card rounded-3xl p-8 sm:p-12 shadow-2xl border border-pink-200 text-center relative overflow-hidden">
+            
+            <!-- Soft Decorative elements -->
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-pink-200 rounded-full blur-2xl opacity-60"></div>
+            <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-200 rounded-full blur-2xl opacity-60"></div>
+
+            <div class="relative z-10">
+                <span class="text-4xl sm:text-5xl mb-4 inline-block">💌</span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 font-khmer-title leading-relaxed">
+                    សារជូនពរចេញពីដួងចិត្ត
+                </h2>
+
+                <div class="space-y-6 text-gray-700 text-base sm:text-lg leading-relaxed text-justify sm:text-center max-w-2xl mx-auto">
+                    <p class="font-medium text-pink-700 bg-pink-50 p-4 rounded-2xl border border-pink-100">
+                        ✨ <strong>រីករាយថ្ងៃខួបកំណើតប្អូនស្រីជាទីស្រលាញ់!</strong> ✨
+                    </p>
+                    <p>
+                        ក្នុងឱកាសថ្ងៃដ៏វិសេសវិសាលនៃទិវាខួបកំណើតគម្រប់វ័យថ្មីនេះ បងសូមបួងសួងដល់វត្ថុស័ក្តិសិទ្ធិក្នុងលោក តាមជួយបីបាច់ថែរក្សា និងប្រទានពរជ័យសិរីសួស្តី ជ័យមង្គល វិបុលសុខគ្រប់ប្រការដល់ប្អូនស្រី!
+                    </p>
+                    <p>
+                        សូមឱ្យប្អូនស្រីមានសុខភាពល្អមាំមួន ប្រាជ្ញាឈ្លាសវៃ រៀនសូត្រកាន់តែពូកែ និងសម្រេចបានគ្រប់ក្តីសុបិនដែលប្អូនប៉ងប្រាថ្នា។ ទោះជាទៅថ្ងៃមុខយ៉ាងណាក៏ដោយ ក៏បងនិងក្រុមគ្រួសារតែងតែនៅក្បែរ លើកទឹកចិត្ត និងស្រលាញ់ប្អូនជានិច្ច!
+                    </p>
+                </div>
+
+                <!-- 4 Blessings Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10">
+                    <div class="p-4 rounded-xl bg-white/70 border border-pink-100 shadow-sm hover:scale-105 transition">
+                        <div class="text-2xl mb-1">🌿</div>
+                        <div class="font-bold text-sm text-gray-800">អាយុយឺនយូរ</div>
+                        <div class="text-xs text-gray-500">Long Life</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-white/70 border border-pink-100 shadow-sm hover:scale-105 transition">
+                        <div class="text-2xl mb-1">🌸</div>
+                        <div class="font-bold text-sm text-gray-800">សម្រស់ស្រស់ស្អាត</div>
+                        <div class="text-xs text-gray-500">Beauty & Youth</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-white/70 border border-pink-100 shadow-sm hover:scale-105 transition">
+                        <div class="text-2xl mb-1">😊</div>
+                        <div class="font-bold text-sm text-gray-800">សេចក្តីសុខ</div>
+                        <div class="text-xs text-gray-500">Happiness</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-white/70 border border-pink-100 shadow-sm hover:scale-105 transition">
+                        <div class="text-2xl mb-1">💪</div>
+                        <div class="font-bold text-sm text-gray-800">សុខភាពមាំមួន</div>
+                        <div class="text-xs text-gray-500">Strong Health</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- INTERACTIVE SURPRISE GIFT BOX SECTION -->
+    <section class="py-14 px-4 text-center relative z-10">
+        <div class="max-w-md mx-auto">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">🎁 ប្រអប់កាដូអាថ៌កំបាំង</h3>
+            <p class="text-gray-500 text-sm mb-6">ចុចលើប្រអប់កាដូដើម្បីបើកមើលពាក្យជូនពរពិសេសបន្ថែម</p>
+            
+            <div id="giftBox" onclick="openGift()" class="cursor-pointer transform hover:scale-110 transition duration-300 inline-block p-6 glass-card rounded-3xl border-2 border-pink-300 shadow-lg group">
+                <div class="text-6xl group-hover:rotate-12 transition duration-300">
+                    🎁
+                </div>
+                <div class="text-xs font-semibold text-pink-600 mt-2">ចុចដើម្បីបើកកាដូ</div>
+            </div>
+
+            <!-- Popup Surprise Card Modal -->
+            <div id="giftModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+                <div class="glass-card bg-white max-w-sm w-full rounded-3xl p-6 text-center transform scale-95 transition-all duration-300 animate-in border border-pink-200 shadow-2xl">
+                    <div class="text-5xl mb-3">💖🧸🎉</div>
+                    <h4 class="text-xl font-bold text-pink-600 mb-2">កាដូដ៏មានតម្លៃបំផុត!</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                        "កាដូដ៏ពិសេសបំផុតមិនមែនជាវត្ថុមានតម្លៃទេ តែជាស្នាមញញឹម សេចក្តីស្រលាញ់ និងភាពកក់ក្តៅរបស់គ្រួសារយើងសម្រាប់ប្អូនជានិច្ច!"
+                    </p>
+                    <button onclick="closeGift()" class="w-full py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white font-medium rounded-full shadow hover:brightness-105 transition">
+                        បិទវិញ និងអរគុណ 💗
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer class="py-8 text-center text-gray-500 text-xs sm:text-sm border-t border-pink-100 relative z-10">
+        <p class="flex items-center justify-center gap-1">
+            Made with love <span class="text-rose-500">❤️</span> for My Dear Sister | Happy Birthday
+        </p>
+        <p class="mt-1 text-gray-400 text-xs">
+            © ថ្ងៃខួបកំណើតដ៏ចងចាំ និងមានន័យបំផុត
+        </p>
+    </footer>
+
+    <!-- Tone.js for Happy Birthday sound synthesis without external audio files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // 1. Generate Floating Ambient Balloons
+        const balloonContainer = document.getElementById('balloon-container');
+        const balloonColors = ['#f472b6', '#ec4899', '#c084fc', '#a855f7', '#fb7185', '#fda4af'];
+        const balloonEmojis = ['🎈', '💖', '✨', '🌸', '🎀'];
+
+        function createBalloon() {
+            const el = document.createElement('div');
+            el.className = 'balloon-item';
+            el.style.left = Math.random() * 92 + 'vw';
+            el.style.animationDuration = (8 + Math.random() * 7) + 's';
+            el.style.fontSize = (20 + Math.random() * 24) + 'px';
+            el.innerHTML = balloonEmojis[Math.floor(Math.random() * balloonEmojis.length)];
+            balloonContainer.appendChild(el);
+
+            setTimeout(() => {
+                el.remove();
+            }, 16000);
+        }
+
+        // Spawn balloons continuously
+        setInterval(createBalloon, 1200);
+        for(let i = 0; i < 6; i++) {
+            createBalloon();
+        }
+
+        // 2. Confetti Cannon Function
+        function launchConfettiRain() {
+            confetti({
+                particleCount: 80,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#f472b6', '#a855f7', '#fbbf24', '#38bdf8', '#fb7185']
+            });
+        }
+
+        // Launch celebratory confetti at start
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                confetti({
+                    particleCount: 60,
+                    spread: 80,
+                    origin: { y: 0.5 }
+                });
+            }, 800);
+        });
+
+        // 3. Cake Candle Blowing Logic
+        let candlesBlown = false;
+        function blowCandleToggle() {
+            const f1 = document.getElementById('flame1');
+            const f2 = document.getElementById('flame2');
+            const f3 = document.getElementById('flame3');
+            const blowBtn = document.getElementById('blowBtn');
+            const wishModal = document.getElementById('wishModal');
+
+            if (!candlesBlown) {
+                // Blow out
+                f1.classList.add('hidden');
+                f2.classList.add('hidden');
+                f3.classList.add('hidden');
+                
+                blowBtn.innerHTML = '🔥 អុជទៀនឡើងវិញ';
+                blowBtn.classList.replace('from-purple-500', 'from-amber-500');
+                blowBtn.classList.replace('to-pink-500', 'to-orange-500');
+
+                // Reveal wish box
+                wishModal.classList.remove('hidden');
+
+                // Happy Confetti blast
+                launchConfettiRain();
+                setTimeout(launchConfettiRain, 400);
+
+                // Play celebration chime
+                playHappyTune();
+                candlesBlown = true;
+            } else {
+                // Relight
+                f1.classList.remove('hidden');
+                f2.classList.remove('hidden');
+                f3.classList.remove('hidden');
+
+                blowBtn.innerHTML = '💨 ចុចទីនេះដើម្បីផ្លុំពន្លត់ទៀន';
+                blowBtn.classList.replace('from-amber-500', 'from-purple-500');
+                blowBtn.classList.replace('to-orange-500', 'to-pink-500');
+                
+                candlesBlown = false;
+            }
+        }
+
+        // 4. Tone.js Melody Synthesizer (Plays "Happy Birthday" melody without external audio file)
+        let isAudioPlaying = false;
+        let synth = null;
+        let melodyPart = null;
+
+        const birthdayNotes = [
+            { time: '0:0', note: 'C4', duration: '8n' },
+            { time: '0:0:2', note: 'C4', duration: '8n' },
+            { time: '0:1', note: 'D4', duration: '4n' },
+            { time: '0:2', note: 'C4', duration: '4n' },
+            { time: '0:3', note: 'F4', duration: '4n' },
+            { time: '1:0', note: 'E4', duration: '2n' },
+
+            { time: '1:2', note: 'C4', duration: '8n' },
+            { time: '1:2:2', note: 'C4', duration: '8n' },
+            { time: '1:3', note: 'D4', duration: '4n' },
+            { time: '2:0', note: 'C4', duration: '4n' },
+            { time: '2:1', note: 'G4', duration: '4n' },
+            { time: '2:2', note: 'F4', duration: '2n' },
+
+            { time: '3:0', note: 'C4', duration: '8n' },
+            { time: '3:0:2', note: 'C4', duration: '8n' },
+            { time: '3:1', note: 'C5', duration: '4n' },
+            { time: '3:2', note: 'A4', duration: '4n' },
+            { time: '3:3', note: 'F4', duration: '4n' },
+            { time: '4:0', note: 'E4', duration: '4n' },
+            { time: '4:1', note: 'D4', duration: '2n' },
+
+            { time: '4:3', note: 'A#4', duration: '8n' },
+            { time: '4:3:2', note: 'A#4', duration: '8n' },
+            { time: '5:0', note: 'A4', duration: '4n' },
+            { time: '5:1', note: 'F4', duration: '4n' },
+            { time: '5:2', note: 'G4', duration: '4n' },
+            { time: '5:3', note: 'F4', duration: '1n' }
+        ];
+
+        async function initAudio() {
+            if (!synth) {
+                await Tone.start();
+                synth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "triangle" },
+                    envelope: {
+                        attack: 0.05,
+                        decay: 0.2,
+                        sustain: 0.3,
+                        release: 1
+                    }
+                }).toDestination();
+                synth.volume.value = -8;
+
+                melodyPart = new Tone.Part((time, value) => {
+                    synth.triggerAttackRelease(value.note, value.duration, time);
+                }, birthdayNotes);
+                melodyPart.loop = true;
+                melodyPart.loopEnd = '7m';
+            }
+        }
+
+        async function toggleAudio() {
+            try {
+                await initAudio();
+                const soundText = document.getElementById('soundText');
+
+                if (!isAudioPlaying) {
+                    Tone.Transport.bpm.value = 110;
+                    Tone.Transport.start();
+                    melodyPart.start(0);
+                    isAudioPlaying = true;
+                    soundText.innerText = "ផ្អាកភ្លេង ⏸️";
+                } else {
+                    Tone.Transport.stop();
+                    isAudioPlaying = false;
+                    soundText.innerText = "ចាក់ភ្លេងពិរោះ 🎵";
+                }
+            } catch(e) {
+                console.log("Audio permission required interaction", e);
+            }
+        }
+
+        function playHappyTune() {
+            try {
+                if (!synth) {
+                    synth = new Tone.Synth().toDestination();
+                }
+                const now = Tone.now();
+                synth.triggerAttackRelease("C5", "8n", now);
+                synth.triggerAttackRelease("E5", "8n", now + 0.15);
+                synth.triggerAttackRelease("G5", "8n", now + 0.3);
+                synth.triggerAttackRelease("C6", "4n", now + 0.45);
+            } catch (e) {
+                // fallback gracefully
+            }
+        }
+
+        // 5. Gift Box Modal
+        function openGift() {
+            document.getElementById('giftModal').classList.remove('hidden');
+            confetti({
+                particleCount: 50,
+                spread: 60,
+                origin: { y: 0.7 }
+            });
+        }
+        function closeGift() {
+            document.getElementById('giftModal').classList.add('hidden');
+        }
+
+        // 6. Lightbox Image Viewer
+        function zoomImage(src, caption) {
+            const modal = document.getElementById('imageLightbox');
+            const img = document.getElementById('lightboxImg');
+            const captionEl = document.getElementById('lightboxCaption');
+            img.src = src;
+            captionEl.innerText = caption;
+            modal.classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('imageLightbox').classList.add('hidden');
+        }
+
+        // 7. Image Upload / Replacement Function
+        function handleSingleUpload(event, targetImgId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const targetEl = document.getElementById(targetImgId);
+                    if (targetEl) {
+                        targetEl.src = e.target.result;
+                    }
+                    // If replacing hero image, also trigger a happy confetti shower!
+                    launchConfettiRain();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>
